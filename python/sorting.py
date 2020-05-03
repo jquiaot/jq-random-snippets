@@ -1,5 +1,6 @@
 import math
 import random
+import sys
 
 # sorting.py - Various sorting algorithms, for practice.
 #
@@ -23,6 +24,8 @@ def insertion_sort(a):
 			i -= 1
 		a[i+1] = val
 	return a
+
+###############################################################################
 
 # Performs merge sort on the specified list of integers.
 #
@@ -65,6 +68,54 @@ def merge(l, r):
 		merged.extend(r[ridx:])
 	return merged
 
+###############################################################################
+
+# Performs quicksort on the specified list of integers. Tries to follow the
+# algorithm specified in CLR (1st ed.), p. 154.
+#
+# Time complexity: Θ(n lg n) average case
+# Space complexity: O(1) - sorts in place
+#
+def quicksort(a):
+	if a:
+		quicksort_helper(a, 0, len(a) - 1)
+	return a
+
+def quicksort_helper(a, p, r):
+	if p < r:
+		# partition a around some pivot
+		q = qs_partition(a, p, r)
+		# then recursively invoke quicksort on subarrays to left of and right
+		# of pivot
+		quicksort_helper(a, p, q)
+		quicksort_helper(a, q+1, r)
+
+# Partitions the subarray a[p..r].
+#
+def qs_partition(a, p, r):
+	# pick the pivot
+	x = a[p]
+	# position pointers i and j just outside our range p..r
+	i = p - 1
+	j = r + 1
+	while True:
+		j -= 1
+		while a[j] > x:
+			# work from j downwards, looking for a value <= our pivot
+			j -= 1
+		i += 1
+		while a[i] < x:
+			# work from i upwards, looking for a value >= our pivot
+			i += 1
+		if i < j:
+			# swap i and j
+			tmp = a[i]
+			a[i] = a[j]
+			a[j] = tmp
+		else:
+			# we've found our partition point
+			return j
+
 ###
 ###
 
@@ -78,28 +129,34 @@ def make_random_array(n):
 		a.append(int(random.random() * n * n))
 	return a
 
+# Asserts the specified list is sorted in ascending order (a[i-1] <= a[i] for i in range(1, len(a)))
+#
 def assert_is_sorted(l):
+	print(l)
 	for i in range(1, len(l)):
 		assert l[i-1] <= l[i]
 
 # Executes the sort methods
 #
-def run_sorts():
-	a = make_random_array(1000)
-	print(a)
+def run_sorts(n):
+	a = make_random_array(n)
 
-	b = merge_sort(a.copy())
-	print(b)
+	b = insertion_sort(a.copy())
 	assert_is_sorted(b)
 
-	c = insertion_sort(a.copy())
-	print(c)
+	c = merge_sort(a.copy())
 	assert_is_sorted(c)
+
+	d = quicksort(a.copy())
+	assert_is_sorted(d)
 
 ###
 ###
 
 if __name__ == '__main__':
-	run_sorts()
+	n = 100
+	if len(sys.argv) == 2:
+		n = int(sys.argv[1])
+	run_sorts(n)
 
 # END
