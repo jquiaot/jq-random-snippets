@@ -3,7 +3,7 @@
 
 import sys
 
-# Fibonacci calculator.
+# Fibonacci calculator, dynamic programming version.
 #
 # fib(0) = 0
 # fib(1) = 1
@@ -22,6 +22,19 @@ def fib(n):
     else:
         return 0
 
+# Another dynamic programming fib version, pre-allocating the array
+# of calculated values.
+#
+def fib_dyn2(n):
+    if n >= 0:
+        a = [None] * (n+1)
+        a[0] = 0
+        a[1] = 1
+        for i in range(2, n + 1):
+            a[i] = a[i-1] + a[i-2]
+        return a[n]
+    else:
+        return 0
 
 # Standard recursive version of Fibonacci. Will blow up your stack if called
 # with sufficiently large n.
@@ -59,6 +72,7 @@ if __name__ == '__main__':
         n = int(sys.argv[1])
         for i in range(1, n+1):
             print('               fib({}) = {}'.format(i, fib(i)))
+            print('          fib_dyn2({}) = {}'.format(i, fib_dyn2(i)))
             print('         fib_recur({}) = {}'.format(i, fib_recur(i)))
             print('fib_recur_memoized({}) = {}'.format(i, fib_recur_memoized(i)))
     else:
